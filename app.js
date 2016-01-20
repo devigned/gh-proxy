@@ -24,6 +24,7 @@ app.get(/proxy\/api.github\.com\/*/i, cache.route({expire: {200: 10000, 404: 100
       for(var key in response.headers){
         res.set(key, response.headers[key]);
       }
+      res.set('Access-Control-Allow-Origin', '*');
       res.send(body);
     } else {
       if(error){
