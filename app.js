@@ -16,9 +16,16 @@ if(process.env.REDIS_HOST && process.env.REDIS_SECRET && process.env.REDIS_PORT)
 
 app.use(cors());
 
+// app.get('/clear', function(req, res){
+//   cache.del('*', function(){
+//     res.send('cleared');
+//   });
+// });
+
 app.get(/proxy\/api.github\.com\/*/i, cache.route({expire: {200: 10000, 404: 100, xxx: 1}}), function (req, res) {
   var originalUrl = req.originalUrl.replace(/^\/proxy\//i, '');
   delete req.headers['host'];
+  delete req.headers['accept-encoding'];
   if(process.env.GH_TOKEN) {
     req.headers['Authorization'] = 'token ' + process.env.GH_TOKEN;
   }
@@ -30,6 +37,7 @@ app.get(/proxy\/api.github\.com\/*/i, cache.route({expire: {200: 10000, 404: 100
       res.send(body);
     } else {
       if(error){
+        console.log(error);
         res.status(500).send({error: error});
       } else {
         res.status(response.statusCode).send(response.body);
