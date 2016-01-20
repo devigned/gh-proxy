@@ -5,6 +5,7 @@
   "main": "app.js",
   "private": true,
   "dependencies": {
+    "cors": "^2.7.1",
     "express": "^4.13.3",
     "express-redis-cache": "^0.2.0",
     "redis": "^2.4.2",

@@ -1,6 +1,7 @@
 var redisCache = require('express-redis-cache'),
   express = require('express'),
   app = express(),
+  cors = require('cors'),
   request = require('request');
 
 var port = process.env.PORT || 4000;
@@ -13,6 +14,8 @@ if(process.env.REDIS_HOST && process.env.REDIS_SECRET && process.env.REDIS_PORT)
   cache = redisCache();
 }
 
+app.use(cors());
+
 app.get(/proxy\/api.github\.com\/*/i, cache.route({expire: {200: 10000, 404: 100, xxx: 1}}), function (req, res) {
   var originalUrl = req.originalUrl.replace(/^\/proxy\//i, '');
   delete req.headers['host'];
@@ -24,7 +27,6 @@ app.get(/proxy\/api.github\.com\/*/i, cache.route({expire: {200: 10000, 404: 100
       for(var key in response.headers){
         res.set(key, response.headers[key]);
       }
-      res.set('Access-Control-Allow-Origin', '*');
       res.send(body);
     } else {
       if(error){
